@@ -6,6 +6,7 @@
     <title>법인 경영과 절세 - 1일차 소책자 퀴즈</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
+        /* 전체 스타일 */
         body {
             font-family: 'Noto Sans KR', sans-serif;
             line-height: 1.6;
@@ -18,6 +19,7 @@
             align-items: center;
         }
 
+        /* 메인 컨테이너 */
         .container {
             background: white;
             border-radius: 20px;
@@ -27,12 +29,7 @@
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
         }
 
-        .emoji-title {
-            font-size: 28px;
-            margin-bottom: 10px;
-            text-align: center;
-        }
-
+        /* 헤더 스타일 */
         h1 {
             color: #2c3e50;
             text-align: center;
@@ -40,6 +37,13 @@
             font-size: 24px;
         }
 
+        .emoji-title {
+            font-size: 28px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        /* 버튼 스타일 */
         .cta-button {
             background: #ffc107;
             color: #2c3e50;
@@ -61,6 +65,29 @@
             box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
         }
 
+        /* 뒤로가기 버튼 */
+        .back-button {
+            background: #e0e0e0;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            margin: 10px 0;
+            display: inline-block;
+        }
+
+        .back-button:hover {
+            background: #d0d0d0;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+        }
+
         .retry-count {
             text-align: center;
             color: #e74c3c;
@@ -68,6 +95,7 @@
             margin: 10px 0;
         }
 
+        /* 진행 상태 바 */
         .progress-container {
             width: 100%;
             height: 10px;
@@ -83,6 +111,7 @@
             transition: width 0.3s ease;
         }
 
+        /* 옵션 스타일 */
         .option-container {
             display: flex;
             align-items: center;
@@ -105,6 +134,7 @@
             border-color: #ffc107;
         }
 
+        /* 결과 스타일 */
         .result-container {
             text-align: center;
             padding: 20px;
@@ -120,6 +150,7 @@
             font-weight: bold;
         }
 
+        /* 알림 메시지 */
         .notice {
             background: #fff3cd;
             padding: 10px;
@@ -129,22 +160,24 @@
             border: 1px solid #ffeeba;
         }
 
-        .quiz-container {
-            display: none;
-        }
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+            }
 
-        #downloadButton {
-            background: #4CAF50;
-            color: white;
-        }
+            .emoji-title {
+                font-size: 24px;
+            }
 
-        #downloadButton:hover {
-            background: #45a049;
+            .cta-button {
+                padding: 12px 24px;
+                font-size: 14px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="container" id="quizContent">
         <div class="emoji-title">📚 법인 경영과 절세 퀴즈 ✨</div>
         <h1>1일차 소책자 학습 확인 테스트</h1>
         
@@ -160,11 +193,16 @@
             🎯 퀴즈 시작하기
         </button>
 
-        <div id="quizContainer" class="quiz-container">
+        <div id="quizContainer" class="quiz-container" style="display: none;">
             <div id="quizQuestions"></div>
-            <button id="submitQuizButton" class="cta-button">
-                ➡️ 다음 문제
-            </button>
+            <div class="button-container">
+                <button id="backButton" class="back-button" style="display: none;">
+                    ⬅️ 이전 문제
+                </button>
+                <button id="submitQuizButton" class="cta-button">
+                    ➡️ 다음 문제
+                </button>
+            </div>
         </div>
 
         <div class="retry-count" id="retryCount"></div>
@@ -175,6 +213,7 @@
     </div>
 
     <script>
+        // 퀴즈 데이터
         const quizData = [
             {
                 question: "법인 리스크 관리에서 가장 중요한 첫 단계는 무엇인가요? 🤔",
@@ -228,49 +267,64 @@
             }
         ];
 
+        // 전역 변수
         let currentQuiz = 0;
         let score = 0;
         let retryCount = 0;
         let currentQuizSet = [];
+        let userAnswers = [];
         const maxRetries = 3;
         const questionsPerQuiz = 3;
 
+        // DOM 요소
         const startQuizButton = document.getElementById('startQuizButton');
         const quizContainer = document.getElementById('quizContainer');
         const quizQuestions = document.getElementById('quizQuestions');
         const submitQuizButton = document.getElementById('submitQuizButton');
+        const backButton = document.getElementById('backButton');
         const downloadButton = document.getElementById('downloadButton');
         const retryCountElement = document.getElementById('retryCount');
         const progressBar = document.querySelector('.progress-bar');
 
+        // 랜덤 문제 선택
         function getRandomQuestions() {
             let shuffled = [...quizData].sort(() => 0.5 - Math.random());
             return shuffled.slice(0, questionsPerQuiz);
         }
 
-        function startQuiz() {
-            currentQuiz = 0;
-            score = 0;
+        // 퀴즈 시작
+        startQuizButton.addEventListener('click', () => {
             currentQuizSet = getRandomQuestions();
+            userAnswers = new Array(questionsPerQuiz).fill(null);
             startQuizButton.style.display = 'none';
             quizContainer.style.display = 'block';
-            downloadButton.style.display = 'none';
+            currentQuiz = 0;
+            score = 0;
             loadQuiz();
-            updateRetryCount();
-        }
+        });
 
-        startQuizButton.addEventListener('click', startQuiz);
+        // 뒤로가기 버튼
+        backButton.addEventListener('click', () => {
+            if (currentQuiz > 0) {
+                currentQuiz--;
+                loadQuiz();
+            }
+        });
 
+        // 퀴즈 로드
         function loadQuiz() {
             const currentQuizData = currentQuizSet[currentQuiz];
             updateProgress();
+
+            // 뒤로가기 버튼 표시 여부
+            backButton.style.display = currentQuiz > 0 ? 'block' : 'none';
 
             let questionHTML = `
                 <div class="question">
                     <p>${currentQuiz + 1}. ${currentQuizData.question}</p>
                     ${currentQuizData.options.map((option, index) => `
-                        <div class="option-container" data-index="${index}">
-                            <input type="radio" name="quiz" id="option${index}" value="${index}">
+                        <div class="option-container ${userAnswers[currentQuiz] === index ? 'selected' : ''}" data-index="${index}">
+                            <input type="radio" name="quiz" id="option${index}" value="${index}" ${userAnswers[currentQuiz] === index ? 'checked' : ''}>
                             <label for="option${index}">${option}</label>
                         </div>
                     `).join('')}
@@ -279,6 +333,7 @@
             
             quizQuestions.innerHTML = questionHTML;
 
+            // 옵션 컨테이너 클릭 이벤트
             document.querySelectorAll('.option-container').forEach(container => {
                 container.addEventListener('click', () => {
                     document.querySelectorAll('.option-container').forEach(c => 
@@ -286,42 +341,39 @@
                     container.classList.add('selected');
                     const radio = container.querySelector('input[type="radio"]');
                     radio.checked = true;
+                    userAnswers[currentQuiz] = parseInt(radio.value);
                 });
             });
+
+            // 마지막 문제일 경우 버튼 텍스트 변경
+            submitQuizButton.textContent = currentQuiz === questionsPerQuiz - 1 ? '📝 결과 확인하기' : '➡️ 다음 문제';
         }
 
+        // 진행률 업데이트
         function updateProgress() {
             const progress = (currentQuiz / questionsPerQuiz) * 100;
             progressBar.style.width = `${progress}%`;
         }
 
-        function updateRetryCount() {
-            if (retryCount > 0) {
-                retryCountElement.textContent = `🔄 남은 도전 기회: ${maxRetries - retryCount}회`;
-            }
-        }
-
+        // 퀴즈 제출
         submitQuizButton.addEventListener('click', () => {
-            const answer = document.querySelector('input[name="quiz"]:checked');
-            
-            if (!answer) {
+            if (userAnswers[currentQuiz] === null) {
                 alert('❗ 답을 선택해주세요!');
                 return;
             }
 
-            if (parseInt(answer.value) === currentQuizSet[currentQuiz].correct) {
-                score++;
-            }
-
-            currentQuiz++;
-
-            if (currentQuiz < questionsPerQuiz) {
-                loadQuiz();
-            } else {
+            if (currentQuiz === questionsPerQuiz - 1) {
+                // 점수 계산
+                score = userAnswers.reduce((acc, answer, index) => 
+                    answer === currentQuizSet[index].correct ? acc + 1 : acc, 0);
                 showResults();
+            } else {
+                currentQuiz++;
+                loadQuiz();
             }
         });
 
+        // 결과 표시
         function showResults() {
             const passScore = 2;
             const passed = score >= passScore;
@@ -330,41 +382,4 @@
                 <div class="result-container">
                     <h2>${passed ? '🎉 축하합니다!' : '😢 아쉽네요!'}</h2>
                     <div class="score">
-                        ${score} / ${questionsPerQuiz} 문제 정답!
-                    </div>
-                    <p>${passed ? 
-                        '🎁 소책자를 다운로드하실 수 있습니다!' : 
-                        `📚 ${passScore}문제 이상 맞추셔야 소책자를 다운로드하실 수 있습니다.`}</p>
-                </div>
-            `;
-
-            if (passed) {
-                downloadButton.style.display = 'block';
-                downloadButton.onclick = function() {
-                    window.location.href = 'https://drive.google.com/file/d/1-sJck3yfMGvqkQuB5dK_dpj0wUSps3_k/view?usp=sharing';
-                };
-            } else if (retryCount < maxRetries - 1) {
-                retryCount++;
-                quizContainer.innerHTML += `
-                    <button onclick="retryQuiz()" class="cta-button">
-                        🔄 다시 도전하기 (${maxRetries - retryCount}회 남음)
-                    </button>
-                `;
-            } else {
-                quizContainer.innerHTML += `
-                    <div class="notice">
-                        ❌ 재도전 기회를 모두 사용하셨습니다.
-                    </div>
-                `;
-            }
-
-            progressBar.style.width = '100%';
-            updateRetryCount();
-        }
-
-        function retryQuiz() {
-            startQuiz();
-        }
-    </script>
-</body>
-</html>
+                        ${score} / ${questionsPerQuiz}
