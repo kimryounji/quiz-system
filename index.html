@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>법인 경영과 절세 - 1일차 소책자 퀴즈</title>
+    <title>리스크 관리 가이드 - 4지선다 퀴즈</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         /* 전체 스타일 */
@@ -65,36 +66,6 @@
             box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
         }
 
-        /* 뒤로가기 버튼 */
-        .back-button {
-            background: #e0e0e0;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            cursor: pointer;
-            margin: 10px 0;
-            display: inline-block;
-        }
-
-        .back-button:hover {
-            background: #d0d0d0;
-        }
-
-        .button-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 20px;
-        }
-
-        .retry-count {
-            text-align: center;
-            color: #e74c3c;
-            font-size: 14px;
-            margin: 10px 0;
-        }
-
         /* 진행 상태 바 */
         .progress-container {
             width: 100%;
@@ -111,7 +82,7 @@
             transition: width 0.3s ease;
         }
 
-        /* 옵션 스타일 */
+        /* 옵션 스타일 개선 */
         .option-container {
             display: flex;
             align-items: center;
@@ -150,6 +121,22 @@
             font-weight: bold;
         }
 
+        /* PDF 다운로드 버튼 */
+        #downloadPdfButton {
+            background: #4CAF50;
+            color: white;
+        }
+
+        #downloadPdfButton:hover {
+            background: #45a049;
+        }
+
+        /* 이모티콘 스타일 */
+        .emoji {
+            font-size: 24px;
+            margin: 0 5px;
+        }
+
         /* 알림 메시지 */
         .notice {
             background: #fff3cd;
@@ -159,27 +146,12 @@
             text-align: center;
             border: 1px solid #ffeeba;
         }
-
-        @media (max-width: 480px) {
-            .container {
-                padding: 20px;
-            }
-
-            .emoji-title {
-                font-size: 24px;
-            }
-
-            .cta-button {
-                padding: 12px 24px;
-                font-size: 14px;
-            }
-        }
     </style>
 </head>
 <body>
     <div class="container" id="quizContent">
-        <div class="emoji-title">📚 법인 경영과 절세 퀴즈 ✨</div>
-        <h1>1일차 소책자 학습 확인 테스트</h1>
+        <div class="emoji-title">📚 리스크 관리 가이드 - 4지선다 퀴즈 ✨</div>
+        <h1>리스크 관리 가이드 학습 확인 테스트</h1>
         
         <div class="notice">
             ⚠️ 재도전 기회는 3번까지만 주어집니다! 신중하게 답해주세요 💪
@@ -193,16 +165,14 @@
             🎯 퀴즈 시작하기
         </button>
 
-        <div id="quizContainer" class="quiz-container" style="display: none;">
+        <div id="quizContainer" class="quiz-container">
             <div id="quizQuestions"></div>
-            <div class="button-container">
-                <button id="backButton" class="back-button" style="display: none;">
-                    ⬅️ 이전 문제
-                </button>
-                <button id="submitQuizButton" class="cta-button">
-                    ➡️ 다음 문제
-                </button>
-            </div>
+            <button id="submitQuizButton" class="cta-button">
+                ➡️ 다음 문제
+            </button>
+            <button id="backQuizButton" class="cta-button" style="display: none;">
+                ⬅️ 이전 문제
+            </button>
         </div>
 
         <div class="retry-count" id="retryCount"></div>
@@ -210,58 +180,162 @@
         <button id="downloadButton" class="cta-button" style="display: none;">
             📖 소책자 다운로드
         </button>
+
+        <button id="retryQuizButton" class="cta-button" style="display: none;">
+            🔄 다시 도전하기
+        </button>
     </div>
 
     <script>
         // 퀴즈 데이터
         const quizData = [
             {
-                question: "법인 리스크 관리에서 가장 중요한 첫 단계는 무엇인가요? 🤔",
+                question: "리스크 관리가 중요한 이유로 적절하지 않은 것은 무엇인가?",
                 options: [
-                    "자금 조달",
-                    "리스크 식별",
-                    "보험 가입",
-                    "직원 교육"
-                ],
-                correct: 1
-            },
-            {
-                question: "효과적인 절세 전략을 위해 가장 먼저 검토해야 할 항목은? 💰",
-                options: [
-                    "매출액",
-                    "사업 계획",
-                    "재무제표",
-                    "직원 수"
+                    "경제 불확실성 증가에 대비하기 위해",
+                    "기업의 지속 가능성을 확보하기 위해",
+                    "문제 발생 후 해결책을 찾기 위해",
+                    "위기를 기회로 바꾸기 위해"
                 ],
                 correct: 2
             },
             {
-                question: "법인세 신고 시 반드시 확인해야 할 사항이 아닌 것은? 📋",
+                question: "경영 리스크 대응 방안으로 옳지 않은 것은?",
                 options: [
-                    "과세표준",
-                    "직원 취미",
-                    "세액공제항목",
-                    "이월결손금"
+                    "권한 위임 체계 구축",
+                    "주요 의사결정 프로세스 매뉴얼화",
+                    "핵심 인력 육성 계획 수립",
+                    "품질 관리 시스템 강화"
+                ],
+                correct: 3
+            },
+            {
+                question: "인사 리스크 대응 방안에 해당하는 항목은?",
+                options: [
+                    "대표이사 유고 대비책 마련",
+                    "계약서 검토 프로세스 체계화",
+                    "산업재해 예방 시스템 구축",
+                    "환율 변동 대비책 마련"
+                ],
+                correct: 2
+            },
+            {
+                question: "법률 리스크를 관리하기 위한 효과적인 방법은 무엇인가?",
+                options: [
+                    "법무 자문 네트워크 확보",
+                    "비상 자금 확보 계획 수립",
+                    "직원 복리후생 제도 개선",
+                    "품질 검사 프로세스 강화"
+                ],
+                correct: 0
+            },
+            {
+                question: "재무 리스크 관리의 주요 목적은 무엇인가?",
+                options: [
+                    "계약서 검토 체계 확립",
+                    "현금 흐름 안정성과 자금 유동성 확보",
+                    "공급망 중단 대비책 마련",
+                    "지적재산권 보호 체계 수립"
                 ],
                 correct: 1
             },
             {
-                question: "법인 보험 설계 시 가장 중요한 고려사항은? 🏢",
+                question: "리스크 분석 단계의 주요 활동으로 적합한 것은?",
                 options: [
-                    "보험료",
-                    "보장 범위",
-                    "가입 기간",
-                    "보험사 규모"
+                    "이해관계자 의견 수렴",
+                    "리스크 발생 가능성 평가",
+                    "실행 일정 계획 수립",
+                    "대응 계획 실행"
                 ],
                 correct: 1
             },
             {
-                question: "효율적인 자금 관리를 위한 첫 번째 단계는? 💼",
+                question: "품질 리스크에 대한 대응 방안으로 올바른 것은?",
                 options: [
-                    "현금 흐름 분석",
-                    "대출 신청",
-                    "자산 매각",
-                    "주식 발행"
+                    "환헤지 전략 수립",
+                    "품질 관리 시스템 구축",
+                    "직원 교육 투자 확대",
+                    "비상 연락망 정비"
+                ],
+                correct: 1
+            },
+            {
+                question: "운영 리스크의 대표적인 예로 적합하지 않은 것은?",
+                options: [
+                    "품질 관리 문제",
+                    "설비 유지보수 계획 미흡",
+                    "사이버 보안 위협",
+                    "경영권 승계 계획 부재"
+                ],
+                correct: 3
+            },
+            {
+                question: "리스크 관리 실행 단계에 포함되지 않는 활동은?",
+                options: [
+                    "리스크 발생 가능성 평가",
+                    "실행 일정 계획",
+                    "대응 계획 실행",
+                    "진행 상황 점검"
+                ],
+                correct: 0
+            },
+            {
+                question: "계약 리스크를 최소화하기 위한 방안으로 적절하지 않은 것은?",
+                options: [
+                    "계약 검토 프로세스 체계화",
+                    "표준계약서 체계 구축",
+                    "계약 이행 모니터링 시스템 도입",
+                    "비상 자금 확보 계획 수립"
+                ],
+                correct: 3
+            },
+            {
+                question: "지적재산권 리스크를 예방하기 위한 올바른 방법은?",
+                options: [
+                    "직원 복리후생 제도 강화",
+                    "특허 관리 시스템 구축",
+                    "환율 모니터링 시스템 도입",
+                    "비상 연락망 정비"
+                ],
+                correct: 1
+            },
+            {
+                question: "산재 리스크를 예방하기 위한 최우선 방안은?",
+                options: [
+                    "직원들에게 스톡옵션 제공",
+                    "정기적인 안전 교육 실시",
+                    "환율 변동 대비책 마련",
+                    "계약서 검토 체계화"
+                ],
+                correct: 1
+            },
+            {
+                question: "리스크 관리의 성공 요소로 적절하지 않은 것은?",
+                options: [
+                    "CEO의 강한 의지",
+                    "감에 의존한 빠른 판단",
+                    "체계적인 데이터 기반 접근",
+                    "지속적인 개선"
+                ],
+                correct: 1
+            },
+            {
+                question: "대응 전략 수립 단계의 주요 활동이 아닌 것은?",
+                options: [
+                    "필요 자원 산정",
+                    "실행 일정 계획",
+                    "이해관계자 의견 수렴",
+                    "책임자 지정"
+                ],
+                correct: 2
+            },
+            {
+                question: "리스크 관리 문화를 정착시키기 위한 올바른 실천 방안은?",
+                options: [
+                    "월간 리스크 리뷰 미팅 시작",
+                    "직원들의 개인별 성과 평가 강화",
+                    "품질 인증 획득 및 유지",
+                    "법적 의무 사항 점검"
                 ],
                 correct: 0
             }
@@ -272,7 +346,6 @@
         let score = 0;
         let retryCount = 0;
         let currentQuizSet = [];
-        let userAnswers = [];
         const maxRetries = 3;
         const questionsPerQuiz = 3;
 
@@ -281,8 +354,9 @@
         const quizContainer = document.getElementById('quizContainer');
         const quizQuestions = document.getElementById('quizQuestions');
         const submitQuizButton = document.getElementById('submitQuizButton');
-        const backButton = document.getElementById('backButton');
+        const backQuizButton = document.getElementById('backQuizButton');
         const downloadButton = document.getElementById('downloadButton');
+        const retryQuizButton = document.getElementById('retryQuizButton');
         const retryCountElement = document.getElementById('retryCount');
         const progressBar = document.querySelector('.progress-bar');
 
@@ -295,20 +369,9 @@
         // 퀴즈 시작
         startQuizButton.addEventListener('click', () => {
             currentQuizSet = getRandomQuestions();
-            userAnswers = new Array(questionsPerQuiz).fill(null);
             startQuizButton.style.display = 'none';
             quizContainer.style.display = 'block';
-            currentQuiz = 0;
-            score = 0;
             loadQuiz();
-        });
-
-        // 뒤로가기 버튼
-        backButton.addEventListener('click', () => {
-            if (currentQuiz > 0) {
-                currentQuiz--;
-                loadQuiz();
-            }
         });
 
         // 퀴즈 로드
@@ -316,15 +379,12 @@
             const currentQuizData = currentQuizSet[currentQuiz];
             updateProgress();
 
-            // 뒤로가기 버튼 표시 여부
-            backButton.style.display = currentQuiz > 0 ? 'block' : 'none';
-
             let questionHTML = `
                 <div class="question">
                     <p>${currentQuiz + 1}. ${currentQuizData.question}</p>
                     ${currentQuizData.options.map((option, index) => `
-                        <div class="option-container ${userAnswers[currentQuiz] === index ? 'selected' : ''}" data-index="${index}">
-                            <input type="radio" name="quiz" id="option${index}" value="${index}" ${userAnswers[currentQuiz] === index ? 'checked' : ''}>
+                        <div class="option-container" data-index="${index}">
+                            <input type="radio" name="quiz" id="option${index}" value="${index}">
                             <label for="option${index}">${option}</label>
                         </div>
                     `).join('')}
@@ -341,12 +401,14 @@
                     container.classList.add('selected');
                     const radio = container.querySelector('input[type="radio"]');
                     radio.checked = true;
-                    userAnswers[currentQuiz] = parseInt(radio.value);
                 });
             });
 
-            // 마지막 문제일 경우 버튼 텍스트 변경
-            submitQuizButton.textContent = currentQuiz === questionsPerQuiz - 1 ? '📝 결과 확인하기' : '➡️ 다음 문제';
+            if (currentQuiz > 0) {
+                backQuizButton.style.display = 'block';
+            } else {
+                backQuizButton.style.display = 'none';
+            }
         }
 
         // 진행률 업데이트
@@ -357,20 +419,30 @@
 
         // 퀴즈 제출
         submitQuizButton.addEventListener('click', () => {
-            if (userAnswers[currentQuiz] === null) {
+            const answer = document.querySelector('input[name="quiz"]:checked');
+            
+            if (!answer) {
                 alert('❗ 답을 선택해주세요!');
                 return;
             }
 
-            if (currentQuiz === questionsPerQuiz - 1) {
-                // 점수 계산
-                score = userAnswers.reduce((acc, answer, index) => 
-                    answer === currentQuizSet[index].correct ? acc + 1 : acc, 0);
-                showResults();
-            } else {
-                currentQuiz++;
-                loadQuiz();
+            if (parseInt(answer.value) === currentQuizSet[currentQuiz].correct) {
+                score++;
             }
+
+            currentQuiz++;
+
+            if (currentQuiz < questionsPerQuiz) {
+                loadQuiz();
+            } else {
+                showResults();
+            }
+        });
+
+        // 이전 문제 버튼 클릭 이벤트
+        backQuizButton.addEventListener('click', () => {
+            currentQuiz--;
+            loadQuiz();
         });
 
         // 결과 표시
@@ -382,4 +454,85 @@
                 <div class="result-container">
                     <h2>${passed ? '🎉 축하합니다!' : '😢 아쉽네요!'}</h2>
                     <div class="score">
-                        ${score} / ${questionsPerQuiz}
+                        ${score} / ${questionsPerQuiz} 문제 정답!
+                    </div>
+                    <p>${passed ? 
+                        '🎁 소책자를 다운로드하실 수 있습니다!' : 
+                        `📚 ${passScore}문제 이상 맞추셔야 소책자를 다운로드하실 수 있습니다.`}</p>
+                </div>
+            `;
+
+            if (passed) {
+                downloadButton.style.display = 'block';
+                downloadButton.addEventListener('click', () => {
+                    window.location.href = 'https://drive.google.com/file/d/1scB_uPLS3MJ-2oEQ2HeHf_Q5d4bsJHET/view?usp=drive_link';
+                });
+            } else if (retryCount < maxRetries - 1) {
+                retryCount++;
+                retryQuizButton.style.display = 'block';
+                retryQuizButton.addEventListener('click', retryQuiz);
+            } else {
+                quizContainer.innerHTML += `
+                    <div class="notice">
+                        ❌ 재도전 기회를 모두 사용하셨습니다.
+                    </div>
+                `;
+            }
+
+            progressBar.style.width = '100%';
+            updateRetryCount();
+        }
+
+        // 재시도 함수
+        function retryQuiz() {
+            currentQuiz = 0;
+score = 0;
+currentQuizSet = getRandomQuestions();
+retryQuizButton.style.display = 'none';
+quizContainer.innerHTML = `
+    <div id="quizQuestions"></div>
+    <button id="submitQuizButton" class="cta-button">
+        ➡️ 다음 문제
+    </button>
+    <button id="backQuizButton" class="cta-button" style="display: none;">
+        ⬅️ 이전 문제
+    </button>
+`;
+quizQuestions = document.getElementById('quizQuestions');
+submitQuizButton = document.getElementById('submitQuizButton');
+backQuizButton = document.getElementById('backQuizButton');
+submitQuizButton.addEventListener('click', () => {
+    const answer = document.querySelector('input[name="quiz"]:checked');
+    
+    if (!answer) {
+        alert('❗ 답을 선택해주세요!');
+        return;
+    }
+
+    if (parseInt(answer.value) === currentQuizSet[currentQuiz].correct) {
+        score++;
+    }
+
+    currentQuiz++;
+
+    if (currentQuiz < questionsPerQuiz) {
+        loadQuiz();
+    } else {
+        showResults();
+    }
+});
+backQuizButton.addEventListener('click', () => {
+    currentQuiz--;
+    loadQuiz();
+});
+loadQuiz();
+        }
+
+        // 재시도 횟수 업데이트
+        function updateRetryCount() {
+            retryCountElement.textContent = retryCount > 0 ? 
+                `🔄 재도전 ${retryCount}회 남음` : '';
+        }
+    </script>
+</body>
+</html>
